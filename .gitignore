@@ -1,0 +1,47 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.dbmdl
+*.pdb
+*.cache
+*.log
+
+# ASP.NET Core
+appsettings.*.json
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# EF Core
+Migrations/
+
+# Angular
+/prescription-app/node_modules/
+/prescription-app/dist/
+/prescription-app/.angular/
+/prescription-app/.output/
+
+# Environment files
+/prescription-app/src/environments/*.ts
+!/prescription-app/src/environments/environment.ts
+
+# npm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS and IDEs
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+*.code-workspace
+
+# VSCode
+.vscode/
