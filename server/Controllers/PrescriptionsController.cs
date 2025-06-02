@@ -47,6 +47,8 @@ namespace server.Controllers
         [HttpPost]
         public ActionResult<Prescription> Create(Prescription prescription)
         {
+            Console.WriteLine($"------------ {prescription}");
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
