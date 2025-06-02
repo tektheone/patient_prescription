@@ -21,14 +21,15 @@ secrets.json
 Migrations/
 
 # Angular
-/prescription-app/node_modules/
-/prescription-app/dist/
-/prescription-app/.angular/
-/prescription-app/.output/
+/client/node_modules/
+/client/dist/
+/client/.angular/
+/client/.output/
+/client/package-lock.json/
 
 # Environment files
-/prescription-app/src/environments/*.ts
-!/prescription-app/src/environments/environment.ts
+/client/src/environments/*.ts
+!/client/src/environments/environment.ts
 
 # npm logs
 npm-debug.log*
