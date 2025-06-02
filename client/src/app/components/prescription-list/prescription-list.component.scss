@@ -1,0 +1,21 @@
+.card {
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.card-header {
+  background-color: #f8f9fa;
+}
+
+.badge {
+  font-size: 0.9rem;
+}
+
+.btn-outline-danger {
+  &:hover {
+    color: white;
+  }
+}
