@@ -5,5 +5,6 @@ import { AddPrescriptionComponent } from './components/add-prescription/add-pres
 export const routes: Routes = [
   { path: '', component: PrescriptionListComponent },
   { path: 'add', component: AddPrescriptionComponent },
+  { path: 'edit/:id', component: AddPrescriptionComponent },
   { path: '**', redirectTo: '' }
 ];
