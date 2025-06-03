@@ -6,7 +6,7 @@ export interface Prescription {
   dosage: string;
   frequency: string;
   prescriptionDate: Date;
-  endDate?: Date;
+  endDate: Date;
   prescribedBy: string;
   notes?: string;
 }

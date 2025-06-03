@@ -1,8 +1,8 @@
 <div class="container mt-4">
   <div class="row mb-4">
     <div class="col">
-      <h2>Add New Prescription</h2>
-      <p class="text-muted">Create a new prescription for a patient</p>
+      <h2>{{ pageTitle }}</h2>
+      <p class="text-muted">{{ isEditMode ? 'Update the prescription details below' : 'Fill out the form below to add a new prescription' }}</p>
     </div>
     <div class="col-auto">
       <button class="btn btn-outline-secondary" (click)="goBack()">
@@ -32,17 +32,21 @@
           <div class="col-md-6">
             <label for="patientId" class="form-label">Patient ID*</label>
             <input 
-              type="number" 
+              type="text" 
               class="form-control" 
               id="patientId" 
               formControlName="patientId"
               [ngClass]="{'is-invalid': prescriptionForm.get('patientId')?.invalid && prescriptionForm.get('patientId')?.touched}"
+              (keydown)="onNumbersOnlyInput($event, 'patientId')"
             >
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('patientId')?.errors?.['required']">
               Patient ID is required.
             </div>
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('patientId')?.errors?.['pattern']">
               Patient ID must be a number.
+            </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('patientId')?.errors?.['maxlength']">
+              The length of Patient ID must be less than 10.
             </div>
           </div>
           
@@ -54,6 +58,7 @@
               id="patientName" 
               formControlName="patientName"
               [ngClass]="{'is-invalid': prescriptionForm.get('patientName')?.invalid && prescriptionForm.get('patientName')?.touched}"
+              (keydown)="onLettersOnlyInput($event, 'patientName')"
             >
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('patientName')?.errors?.['required']">
               Patient name is required.
@@ -61,58 +66,79 @@
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('patientName')?.errors?.['minlength']">
               Patient name must be at least 2 characters.
             </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('patientName')?.errors?.['pattern']">
+              Patient name must contain only letters, no numbers.
+            </div>
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label for="medicationName" class="form-label">Medication Name*</label>
+            <label for="medicationName" class="form-label">Medication Name* (Generic/Brand)</label>
             <input 
               type="text" 
               class="form-control" 
               id="medicationName" 
               formControlName="medicationName"
               [ngClass]="{'is-invalid': prescriptionForm.get('medicationName')?.invalid && prescriptionForm.get('medicationName')?.touched}"
+              (keydown)="onMedicationNameInput($event)"
             >
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('medicationName')?.errors?.['required']">
               Medication name is required.
             </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('medicationName')?.errors?.['maxlength']">
+              Medication name must be less than 20 characters.
+            </div>
           </div>
           
           <div class="col-md-6">
-            <label for="dosage" class="form-label">Dosage*</label>
+            <label for="dosage" class="form-label">Dosage* (mg)</label>
             <input 
               type="text" 
               class="form-control" 
               id="dosage" 
               formControlName="dosage"
               [ngClass]="{'is-invalid': prescriptionForm.get('dosage')?.invalid && prescriptionForm.get('dosage')?.touched}"
-              placeholder="e.g., 500mg"
+              placeholder="e.g., 500"
+              (keydown)="onDosageInput($event)"
             >
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('dosage')?.errors?.['required']">
               Dosage is required.
+            </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('dosage')?.errors?.['pattern']">
+              Dosage must be a valid number, not letters.
+            </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('dosage')?.errors?.['maxlength']">
+              Dosage must be less than 10 characters.
             </div>
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label for="frequency" class="form-label">Frequency*</label>
+            <label for="frequency" class="form-label">Frequency* (Times/Day)</label>
             <input 
               type="text" 
               class="form-control" 
               id="frequency" 
               formControlName="frequency"
               [ngClass]="{'is-invalid': prescriptionForm.get('frequency')?.invalid && prescriptionForm.get('frequency')?.touched}"
-              placeholder="e.g., Once daily"
+              placeholder="e.g., 2"
+              (keydown)="onNumbersOnlyInput($event, 'frequency')"
             >
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('frequency')?.errors?.['required']">
               Frequency is required.
             </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('frequency')?.errors?.['pattern']">
+              Frequency must be a number, not letters.
+            </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('frequency')?.errors?.['maxlength']">
+              Frequency must be less than 10 characters.
+            </div>
           </div>
           
           <div class="col-md-6">
-            <label for="prescribedBy" class="form-label">Prescribed By*</label>
+            <label for="prescribedBy" class="form-label">Prescribed By* (Doctor Name)</label>
             <input 
               type="text" 
               class="form-control" 
@@ -120,9 +146,16 @@
               formControlName="prescribedBy"
               [ngClass]="{'is-invalid': prescriptionForm.get('prescribedBy')?.invalid && prescriptionForm.get('prescribedBy')?.touched}"
               placeholder="e.g., Dr. Smith"
+              (keydown)="onLettersOnlyInput($event, 'prescribedBy')"
             >
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('prescribedBy')?.errors?.['required']">
               Prescriber name is required.
+            </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('prescribedBy')?.errors?.['pattern']">
+              Prescriber name must contain only letters, no numbers.
+            </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('prescribedBy')?.errors?.['maxlength']">
+              Prescriber name must be less than 20 characters.
             </div>
           </div>
         </div>
@@ -138,39 +171,43 @@
               [ngClass]="{'is-invalid': prescriptionForm.get('prescriptionDate')?.invalid && prescriptionForm.get('prescriptionDate')?.touched}"
             >
             <div class="invalid-feedback" *ngIf="prescriptionForm.get('prescriptionDate')?.errors?.['required']">
-              Prescription date is required.
+              Prescription Date is required.
             </div>
           </div>
           
           <div class="col-md-6">
-            <label for="endDate" class="form-label">End Date</label>
+            <label for="endDate" class="form-label">End Date*</label>
             <input 
               type="date" 
               class="form-control" 
               id="endDate" 
               formControlName="endDate"
+              [ngClass]="{'is-invalid': prescriptionForm.get('endDate')?.invalid && prescriptionForm.get('endDate')?.touched}"
             >
+            <div class="invalid-feedback" *ngIf="prescriptionForm.get('endDate')?.errors?.['required']">
+              End Date is required.
+            </div>
+            <div class="invalid-feedback" *ngIf="prescriptionForm.errors?.['endDateBeforePrescriptionDate']">
+              End Date cannot be before Prescription Date.
+            </div>
           </div>
         </div>
 
         <div class="mb-3">
-          <label for="notes" class="form-label">Notes</label>
+          <label for="notes" class="form-label">Notes (max 500 chars)</label>
           <textarea 
             class="form-control" 
             id="notes" 
             formControlName="notes"
             rows="3"
             placeholder="Additional instructions or notes"
+            (keydown)="onNotesInput($event)"
           ></textarea>
         </div>
 
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary" [disabled]="loading">
-            <i class="bi bi-save me-2"></i>Save Prescription
-          </button>
-          <button type="button" class="btn btn-outline-secondary" (click)="resetForm()" [disabled]="loading">
-            <i class="bi bi-x-circle me-2"></i>Reset Form
-          </button>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="loading">{{ submitButtonText }}</button>
         </div>
       </form>
     </div>

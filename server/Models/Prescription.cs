@@ -24,7 +24,7 @@ namespace server.Models
 
         public DateTime PrescriptionDate { get; set; } = DateTime.Now;
 
-        public DateTime? EndDate { get; set; }
+        public DateTime EndDate { get; set; } = DateTime.Now;
 
         [Required]
         public string PrescribedBy { get; set; } = string.Empty;
