@@ -9,7 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Register PrescriptionService as a singleton
-builder.Services.AddSingleton<PrescriptionService>();
+builder.Services.AddSingleton<IPrescriptionService, PrescriptionService>();
 
 // Add controllers
 builder.Services.AddControllers();

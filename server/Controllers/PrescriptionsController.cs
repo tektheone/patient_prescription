@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using server.Models;
 using server.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace server.Controllers
 {
@@ -9,25 +11,26 @@ namespace server.Controllers
     [Route("api/[controller]")]
     public class PrescriptionsController : ControllerBase
     {
-        private readonly PrescriptionService _prescriptionService;
+        private readonly IPrescriptionService _prescriptionService;
 
-        public PrescriptionsController(PrescriptionService prescriptionService)
+        public PrescriptionsController(IPrescriptionService prescriptionService)
         {
             _prescriptionService = prescriptionService;
         }
 
         // GET: api/prescriptions
         [HttpGet]
-        public ActionResult<IEnumerable<Prescription>> GetAll()
+        public async Task<ActionResult<IEnumerable<Prescription>>> GetAll()
         {
-            return Ok(_prescriptionService.GetAll());
+            var prescriptions = await _prescriptionService.GetAllPrescriptionsAsync();
+            return Ok(prescriptions);
         }
 
         // GET: api/prescriptions/5
         [HttpGet("{id}")]
-        public ActionResult<Prescription> GetById(int id)
+        public async Task<ActionResult<Prescription>> GetById(int id)
         {
-            var prescription = _prescriptionService.GetById(id);
+            var prescription = await _prescriptionService.GetPrescriptionByIdAsync(id);
             if (prescription == null)
             {
                 return NotFound();
@@ -39,13 +42,15 @@ namespace server.Controllers
         [HttpGet("patient/{patientId}")]
         public ActionResult<IEnumerable<Prescription>> GetByPatientId(int patientId)
         {
-            var prescriptions = _prescriptionService.GetByPatientId(patientId);
+            // This method isn't part of the interface yet, so we'll keep it as is for now
+            // In a real application, we would add this to the interface and implement it
+            var prescriptions = ((PrescriptionService)_prescriptionService).GetByPatientId(patientId);
             return Ok(prescriptions);
         }
 
         // POST: api/prescriptions
         [HttpPost]
-        public ActionResult<Prescription> Create(Prescription prescription)
+        public async Task<ActionResult<Prescription>> Create(Prescription prescription)
         {
             Console.WriteLine($"------------ {prescription}");
             
@@ -54,13 +59,13 @@ namespace server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var createdPrescription = _prescriptionService.Add(prescription);
+            var createdPrescription = await _prescriptionService.CreatePrescriptionAsync(prescription);
             return CreatedAtAction(nameof(GetById), new { id = createdPrescription.Id }, createdPrescription);
         }
 
         // PUT: api/prescriptions/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, Prescription prescription)
+        public async Task<IActionResult> Update(int id, Prescription prescription)
         {
             if (id != prescription.Id)
             {
@@ -72,7 +77,7 @@ namespace server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var success = _prescriptionService.Update(prescription);
+            var success = await _prescriptionService.UpdatePrescriptionAsync(id, prescription);
             if (!success)
             {
                 return NotFound();
@@ -83,9 +88,9 @@ namespace server.Controllers
 
         // DELETE: api/prescriptions/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var success = _prescriptionService.Delete(id);
+            var success = await _prescriptionService.DeletePrescriptionAsync(id);
             if (!success)
             {
                 return NotFound();
