@@ -1,0 +1,98 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col">
+      <h2>Patient Prescriptions</h2>
+      <p class="text-muted">View and manage all patient prescriptions</p>
+    </div>
+    <div class="col-auto">
+      <a routerLink="/add" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-2"></i>Add New Prescription
+      </a>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Filter Prescriptions</h5>
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <label for="patientIdFilter" class="col-form-label">Patient ID:</label>
+        </div>
+        <div class="col-auto">
+          <input type="text" id="patientIdFilter" class="form-control" [(ngModel)]="patientIdFilter" (ngModelChange)="filterByPatientId()" placeholder="Enter patient ID">
+        </div>
+        <div class="col-auto">
+          <!-- Apply Filter button removed as filtering happens automatically -->
+          <button class="btn btn-outline-secondary" (click)="clearFilter()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="d-flex justify-content-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && filteredPrescriptions.length === 0" class="alert alert-info" role="alert">
+    No prescriptions found. Please add a new prescription or try a different filter.
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 g-4" *ngIf="!loading && filteredPrescriptions.length > 0">
+    <div class="col" *ngFor="let prescription of filteredPrescriptions">
+      <div class="card mb-3" (click)="editPrescription(prescription.id!)" style="cursor: pointer;">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ prescription.medicationName }}</h5>
+          <span class="badge bg-primary">{{ prescription.dosage }} mg</span>
+        </div>
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Patient: {{ prescription.patientName }} (ID: {{ prescription.patientId }})</h6>
+          <p class="card-text">
+            <strong>Frequency:</strong> {{ prescription.frequency }} (times/day)<br>
+            <strong>Prescribed By:</strong> {{ prescription.prescribedBy }}<br>
+            <strong>Prescription Date:</strong> {{ formatDate(prescription.prescriptionDate) }}<br>
+            <strong>End Date:</strong> {{ formatDate(prescription.endDate) }}
+          </p>
+          <p class="card-text" *ngIf="prescription.notes">
+            <strong>Notes:</strong> {{ prescription.notes }}
+          </p>
+        </div>
+        <div class="card-footer d-flex justify-content-end">
+          <button class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(prescription); $event.stopPropagation()">
+            <i class="bi bi-trash me-1"></i>Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal" [class.show]="showDeleteModal" [class.closing]="modalClosing" [style.display]="showDeleteModal ? 'block' : 'none'" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true" style="transition: none !important;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close" (click)="cancelDelete()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="prescriptionToDelete">
+        <p>Are you sure you want to delete the prescription for patient <strong>{{ prescriptionToDelete.patientName }}</strong>?</p>
+        <p>Medication: <strong>{{ prescriptionToDelete.medicationName }}</strong></p>
+        <p>This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()">Delete Prescription</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal backdrop -->
+<div class="modal-backdrop" [class.show]="showDeleteModal" [class.closing]="modalClosing" *ngIf="showDeleteModal"></div>
+</div>
